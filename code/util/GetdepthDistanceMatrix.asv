@@ -1,0 +1,25 @@
+function depthdistM = GetdepthDistanceMatrix(depthimage,pixelList);
+% Get pair-wise distance matrix between each rows in feature
+% Each row of feature correspond to a sample
+
+[h, w, chn] = size(depthimage);
+tmpImg=reshape(depthimage, h*w, chn);
+
+spNum = length(pixelList);
+DistM2 = zeros(spNum, spNum);
+meandepth=zeros(spNum, chn);
+
+for i = 1 : spNum
+ meandepth(i, :) = mean(tmpImg(pixelList{i},:),1);   %每个超像素的深度均值 .tmpImg(pixelList{i},:)是超像素i中图像像素;
+ %pixelList{i}是超像素i的图像像素坐标
+end
+
+for n = 1:size(meandepth, 2)
+   DistM2 = abs(repmat(meandepth(:,n), [1, spNum]) - repmat(meandepth(:,n)', [spNum, 1]));
+end
+depthdistM = DistM2;  %Dd(rk-ri)=|dk-di|
+
+
+
+%     value=max(max(A));
+%     [row col]=find(value==A);
